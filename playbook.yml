@@ -1,0 +1,58 @@
+---
+- hosts: all
+
+  tasks:
+    - name: Setup homebrew install path.
+      file:
+        path: /usr/local
+        group: admin
+        mode: 0775
+        state: directory
+      sudo: yes
+
+    - name: Ensure homebrew is installed.
+      git:
+        repo: git://github.com/Homebrew/homebrew.git
+        version: master
+        dest: /usr/local
+        update: no
+        accept_hostkey: yes
+
+    - name: Ensure proper permissions on homebrew_brew_bin_path dirs.
+      file:
+        path: /usr/local/bin
+        group: admin
+        mode: 0775
+        state: directory
+        recurse: true
+      sudo: yes
+
+    - name: Check if homebrew binary is already in place.
+      stat: "path=/usr/local/bin/brew"
+      register: homebrew_binary
+
+    - name: Symlink brew to homebrew_brew_bin_path.
+      file:
+        src: /usr/local
+        dest: "/usr/local/bin/brew"
+        state: link
+      when: homebrew_binary.stat.exists == false
+      sudo: yes
+
+    # Tap.
+    - name: Ensure configured taps are tapped.
+      homebrew_tap: "tap={{ item }} state=present"
+      with_items: 
+        - caskroom/cask
+
+    # Brew.
+    - name: Ensure configured homebrew packages are installed.
+      homebrew: "name={{ item }} state=present"
+      with_items: 
+        - ssh-copy-id
+        - pv
+
+    - name: Upgrade all homebrew packages (if configured).
+      homebrew: update_homebrew=yes upgrade_all=yes
+      when: no
+
