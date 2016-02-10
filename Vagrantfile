@@ -9,7 +9,11 @@ Vagrant.configure(2) do |config|
     linux.vm.box = "centos/7"
   end
   config.vm.synced_folder ".", "/vagrant", type: "rsync"
-  config.vm.provision :ansible do |ansible|
-    ansible.playbook = "playbook.yml"
-  end
+  config.vm.provision "shell", inline: <<-SHELL
+    if ! type pip >/dev/null 2>&1; then
+      curl -O https://bootstrap.pypa.io/get-pip.py \
+        && sudo python get-pip.py
+    fi
+    sudo pip install ansible
+  SHELL
 end
