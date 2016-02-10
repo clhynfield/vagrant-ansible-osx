@@ -19,6 +19,8 @@ Vagrant.configure(2) do |config|
       curl -O https://bootstrap.pypa.io/get-pip.py \
         && sudo python get-pip.py
     fi
-    sudo pip install ansible
+    if ! type ansible >/dev/null 2>&1; then
+      sudo pip install ansible
+    fi
   SHELL
 end
