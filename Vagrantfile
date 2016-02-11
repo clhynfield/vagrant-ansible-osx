@@ -14,13 +14,5 @@ Vagrant.configure(2) do |config|
     SHELL
   end
   config.vm.synced_folder ".", "/vagrant", type: "rsync"
-  config.vm.provision "shell", inline: <<-SHELL
-    if ! type pip >/dev/null 2>&1; then
-      curl -O https://bootstrap.pypa.io/get-pip.py \
-        && sudo python get-pip.py
-    fi
-    if ! type ansible >/dev/null 2>&1; then
-      sudo pip install ansible
-    fi
-  SHELL
+  config.vm.provision "shell", path: "bootstrap-ansible.sh"
 end
