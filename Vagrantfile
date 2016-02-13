@@ -8,11 +8,6 @@ Vagrant.configure(2) do |config|
   end
   config.vm.define "linux" do |linux|
     linux.vm.box = "centos/7"
-    linux.vm.provision "shell", inline: <<-SHELL
-      for package in gcc python-devel; do
-        sudo yum --assumeyes install "$package"
-      done
-    SHELL
     linux.vm.provision "shell", path: "bootstrap-ansible.sh"
   end
   config.vm.synced_folder ".", "/vagrant", type: "rsync"
