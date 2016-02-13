@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
 if type yum >/dev/null 2>&1; then
-  for package in gcc python-devel; do
-    sudo yum --assumeyes install "$package"
-  done
+  sudo yum --assumeyes install gcc python-devel
 fi
 
 if ! type pip >/dev/null 2>&1; then
